@@ -1,0 +1,24 @@
+{
+    "name": "phwoolcon/payment",
+    "description": "Payment module for Phwoolcon",
+    "keywords": ["phwoolcon", "payment", "phalcon", "swoole"],
+    "type": "library",
+    "license": "Apache-2.0",
+    "authors": [
+        {
+            "name": "Christopher CHEN",
+            "email": "fishdrowned@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "php": ">=5.5.0",
+        "phwoolcon/phwoolcon": "dev-master"
+    },
+    "autoload": {
+        "psr-4": {"Phwoolcon\\Payment\\": "src"}
+    },
+    "bin": [
+        "phwoolcon-package/phwoolcon-package-payment.php"
+    ]
+}
