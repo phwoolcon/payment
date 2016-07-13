@@ -93,6 +93,7 @@ trait OrderFsmTrait
 
     /**
      * @return array
+     * @codeCoverageIgnore
      */
     public function getFsmTransitions()
     {
@@ -103,9 +104,11 @@ trait OrderFsmTrait
     {
         /* @var Order $order */
         $order = Di::getDefault()->get(Order::class);
+
+        // Detect required fields
         foreach ($order->requiredFieldsOnPreparation as $field) {
             if (empty($data[$field])) {
-                throw new OrderException(__('Invalid %field%', [
+                throw new OrderException(__('Missing required field %field%', [
                     'field' => $field,
                 ]), OrderException::ERROR_CODE_BAD_PARAMETERS);
             }
@@ -128,6 +131,7 @@ trait OrderFsmTrait
         foreach ($order->protectedFieldsOnPreparation as $field) {
             unset($data[$field]);
         }
+        unset($data[static::PREFIXED_ORDER_ID_FIELD]);
 
         // Remove objects in $data
         foreach ($data as $k => $v) {
@@ -191,6 +195,7 @@ trait OrderFsmTrait
     /**
      * @param array $fsmTransitions
      * @return $this
+     * @codeCoverageIgnore
      */
     public function setFsmTransitions(array $fsmTransitions)
     {

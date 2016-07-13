@@ -15,10 +15,16 @@ class TestOrderModel extends Order
         $db->createTable($this->_table, null, [
             'columns' => [
                 new Column('id', [
+                    'type' => Column::TYPE_BIGINTEGER,
+                    'size' => 20,
+                    'unsigned' => true,
+                    'notNull' => true,
+                    'primary' => true,
+                ]),
+                new Column('prefixed_order_id', [
                     'type' => Column::TYPE_VARCHAR,
                     'size' => 50,
                     'notNull' => true,
-                    'primary' => true,
                 ]),
                 new Column('trade_id', [
                     'type' => Column::TYPE_VARCHAR,
@@ -148,6 +154,7 @@ class TestOrderModel extends Order
             ],
             'indexes' => [
                 new Index('trade_id', ['trade_id', 'client_id'], 'UNIQUE'),
+                new Index('prefixed_order_id', ['prefixed_order_id'], 'UNIQUE'),
                 new Index('user_identifier', ['user_identifier', 'client_id']),
             ],
             'options' => [

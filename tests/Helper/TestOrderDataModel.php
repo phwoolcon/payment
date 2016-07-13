@@ -16,8 +16,9 @@ class TestOrderDataModel extends OrderData
         $db->createTable($this->_table, null, [
             'columns' => [
                 new Column('order_id', [
-                    'type' => Column::TYPE_VARCHAR,
-                    'size' => 50,
+                    'type' => Column::TYPE_BIGINTEGER,
+                    'size' => 20,
+                    'unsigned' => true,
                     'notNull' => true,
                     'primary' => true,
                 ]),

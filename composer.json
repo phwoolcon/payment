@@ -16,7 +16,10 @@
         "phwoolcon/phwoolcon": "dev-master"
     },
     "autoload": {
-        "psr-4": {"Phwoolcon\\Payment\\": "src"}
+        "psr-4": {
+            "Phwoolcon\\Payment\\": "src",
+            "Phwoolcon\\Payment\\Tests\\": "tests"
+        }
     },
     "bin": [
         "phwoolcon-package/phwoolcon-package-payment.php"

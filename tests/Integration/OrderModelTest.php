@@ -200,7 +200,7 @@ class OrderModelTest extends TestCase
 
         // Success if crucial attributes are not changed and status is pending
         $order = Order::prepare([
-            'order_prefix' => 'NEW-TEST',
+            'order_prefix' => 'MUTATED',
             'amount' => '1',
             'trade_id' => $order->getTradeId(),
             'product_name' => 'Test product',

@@ -13,10 +13,12 @@ use Phwoolcon\Model;
  * @method string getStatus()
  * @method string getTradeId()
  * @method Order setStatus(string $status)
+ * @method Order setPrefixedOrderId(string $orderId)
  */
 class Order extends Model
 {
     use OrderFsmTrait;
+    const PREFIXED_ORDER_ID_FIELD = 'prefixed_order_id';
 
     const STATUS_CANCELED = 'canceled';
     const STATUS_CANCELING = 'canceling';
@@ -37,7 +39,6 @@ class Order extends Model
     ];
 
     protected $protectedFieldsOnPreparation = [
-        'id',
         'txn_id',
         'created_at',
         'completed_at',
@@ -47,26 +48,21 @@ class Order extends Model
     protected $requiredFieldsOnPreparation = [
         'trade_id',
         'client_id',
+        'user_identifier',
         'product_name',
+        'payment_gateway',
+        'payment_method',
+        'amount',
     ];
 
     protected $orderData;
-
-    /**
-     * @return $this
-     * @codeCoverageIgnore
-     */
-    public function generateDistributedId()
-    {
-        return $this->generateOrderId('NA');
-    }
 
     public function generateOrderId($prefix = '')
     {
         $orderId = $prefix . (date('Y') - 2004) . date('md') . substr(time(), -5) . substr(microtime(), 2, 3) .
             static::$_distributedOptions['node_id'] . mt_rand(100, 999);
         $hasOrderId = $this->findFirst([
-            'id = :id:',
+            static::PREFIXED_ORDER_ID_FIELD . ' = :id:',
             'bind' => [
                 'id' => $orderId,
             ],
@@ -76,7 +72,7 @@ class Order extends Model
             return $this->generateOrderId($prefix);
         }
         // @codeCoverageIgnoreEnd
-        $this->setId($orderId);
+        $this->setPrefixedOrderId($orderId);
         return $this;
     }
 

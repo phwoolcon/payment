@@ -13,6 +13,9 @@
     <file>src</file>
     <file>tests</file>
 
+    <exclude-pattern>tests/start.php</exclude-pattern>
+    <exclude-pattern>tests/root/storage</exclude-pattern>
+
     <arg value="sp"/>
     <arg name="colors"/>
     <arg name="report-width" value="180"/>
