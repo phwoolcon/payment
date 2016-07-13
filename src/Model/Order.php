@@ -1,12 +1,12 @@
 <?php
-namespace Phwoolcon\Model;
+namespace Phwoolcon\Payment\Model;
 
 use Phalcon\Di;
 use Phwoolcon\Model;
 
 /**
  * Class Order
- * @package Phwoolcon\Model
+ * @package Phwoolcon\Payment\Model
  *
  * @property Di     $_dependencyInjector
  * @property string $status

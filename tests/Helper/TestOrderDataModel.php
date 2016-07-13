@@ -1,11 +1,11 @@
 <?php
-namespace Phwoolcon\Tests\Helper;
+namespace Phwoolcon\Payment\Tests\Helper;
 
 use Phalcon\Db\Column;
 use Phalcon\Db\Index;
 use Phalcon\Db\Reference;
 use Phwoolcon\Db;
-use Phwoolcon\Model\OrderData;
+use Phwoolcon\Payment\Model\OrderData;
 
 class TestOrderDataModel extends OrderData
 {

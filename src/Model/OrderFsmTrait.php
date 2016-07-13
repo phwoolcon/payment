@@ -1,9 +1,9 @@
 <?php
-namespace Phwoolcon\Model;
+namespace Phwoolcon\Payment\Model;
 
 use Phalcon\Di;
 use Phwoolcon\Events;
-use Phwoolcon\Exception\OrderException;
+use Phwoolcon\Payment\Exception\OrderException;
 use Phwoolcon\Fsm\StateMachine;
 
 trait OrderFsmTrait

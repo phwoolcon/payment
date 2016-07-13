@@ -1,13 +1,13 @@
 <?php
-namespace Phwoolcon\Tests\Integration;
+namespace Phwoolcon\Payment\Tests\Integration;
 
 use Phwoolcon\Db;
-use Phwoolcon\Exception\OrderException;
-use Phwoolcon\Model\Order;
-use Phwoolcon\Model\OrderData;
+use Phwoolcon\Payment\Exception\OrderException;
+use Phwoolcon\Payment\Model\Order;
+use Phwoolcon\Payment\Model\OrderData;
 use Phwoolcon\Tests\Helper\TestCase;
-use Phwoolcon\Tests\Helper\TestOrderModel;
-use Phwoolcon\Tests\Helper\TestOrderDataModel;
+use Phwoolcon\Payment\Tests\Helper\TestOrderModel;
+use Phwoolcon\Payment\Tests\Helper\TestOrderDataModel;
 
 class OrderModelTest extends TestCase
 {

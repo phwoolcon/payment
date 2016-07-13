@@ -1,10 +1,10 @@
 <?php
-namespace Phwoolcon\Tests\Helper;
+namespace Phwoolcon\Payment\Tests\Helper;
 
 use Phalcon\Db\Column;
 use Phalcon\Db\Index;
 use Phwoolcon\Db;
-use Phwoolcon\Model\Order;
+use Phwoolcon\Payment\Model\Order;
 
 class TestOrderModel extends Order
 {

@@ -1,5 +1,5 @@
 <?php
-namespace Phwoolcon\Exception;
+namespace Phwoolcon\Payment\Exception;
 
 use RuntimeException;
 

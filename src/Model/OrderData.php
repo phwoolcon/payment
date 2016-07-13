@@ -1,11 +1,11 @@
 <?php
-namespace Phwoolcon\Model;
+namespace Phwoolcon\Payment\Model;
 
 use Phwoolcon\Model;
 
 /**
  * Class OrderData
- * @package Phwoolcon\Model
+ * @package Phwoolcon\Payment\Model
  */
 class OrderData extends Model
 {
