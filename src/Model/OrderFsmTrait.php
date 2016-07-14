@@ -132,6 +132,7 @@ trait OrderFsmTrait
         Events::fire('order:before_canceled', $this);
         $status = $this->getFsm()->doAction('confirm_cancel');
         $this->updateStatus($status, $comment ?: __('Order canceled'))
+            ->setData('canceled_at', time())
             ->refreshFsmHistory();
         Events::fire('order:after_canceled', $this);
     }
@@ -146,6 +147,7 @@ trait OrderFsmTrait
         Events::fire('order:before_failed', $this);
         $status = $this->getFsm()->doAction('confirm_fail');
         $this->updateStatus($status, $comment ?: __('Order failed'))
+            ->setData('failed_at', time())
             ->refreshFsmHistory();
         Events::fire('order:after_failed', $this);
     }
