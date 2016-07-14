@@ -19,7 +19,10 @@
         "psr-4": {
             "Phwoolcon\\Payment\\": "src",
             "Phwoolcon\\Payment\\Tests\\": "tests"
-        }
+        },
+        "exclude-from-classmap": [
+            "/tests/"
+        ]
     },
     "bin": [
         "phwoolcon-package/phwoolcon-package-payment.php"
