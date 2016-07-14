@@ -6,6 +6,12 @@ use Phwoolcon\Events;
 use Phwoolcon\Payment\Exception\OrderException;
 use Phwoolcon\Fsm\StateMachine;
 
+/**
+ * Class OrderFsmTrait
+ * @package Phwoolcon\Payment\Model
+ *
+ * @method Order updateStatus(string $status, string $comment)
+ */
 trait OrderFsmTrait
 {
     /**
@@ -18,22 +24,40 @@ trait OrderFsmTrait
             'confirm' => Order::STATUS_PROCESSING,
             'complete' => Order::STATUS_COMPLETE,
             'cancel' => Order::STATUS_CANCELING,
-            'fail' => Order::STATUS_FAILED,
+            'fail' => Order::STATUS_FAILING,
         ],
         Order::STATUS_PROCESSING => [
             'complete' => Order::STATUS_COMPLETE,
             'cancel' => Order::STATUS_CANCELING,
-            'fail' => Order::STATUS_FAILED,
+            'fail' => Order::STATUS_FAILING,
         ],
         Order::STATUS_CANCELING => [
             'complete' => Order::STATUS_COMPLETE,
             'confirm_cancel' => Order::STATUS_CANCELED,
+        ],
+        Order::STATUS_FAILING => [
+            'complete' => Order::STATUS_COMPLETE,
+            'confirm_fail' => Order::STATUS_FAILED,
         ],
     ];
 
     public function canCancel()
     {
         return $this->getFsm()->canDoAction('cancel');
+    }
+
+    public function cancel($comment = null)
+    {
+        if (!$this->canCancel()) {
+            throw new OrderException(__('Can not mark a %status% order as canceling', [
+                'status' => $this->getStatus(),
+            ]), OrderException::ERROR_CODE_ORDER_CANNOT_BE_CANCELED);
+        }
+        Events::fire('order:before_canceling', $this);
+        $status = $this->getFsm()->doAction('cancel');
+        $this->updateStatus($status, $comment ?: __('Order canceling'))
+            ->refreshFsmHistory();
+        Events::fire('order:after_canceling', $this);
     }
 
     public function canComplete()
@@ -51,6 +75,11 @@ trait OrderFsmTrait
         return $this->getFsm()->canDoAction('confirm_cancel');
     }
 
+    public function canConfirmFail()
+    {
+        return $this->getFsm()->canDoAction('confirm_fail');
+    }
+
     public function canFail()
     {
         return $this->getFsm()->canDoAction('fail');
@@ -64,8 +93,11 @@ trait OrderFsmTrait
     public function complete($comment = null)
     {
         if (!$this->canComplete()) {
-            throw new OrderException(__('Order has been completed'), OrderException::ERROR_CODE_ORDER_COMPLETED);
+            throw new OrderException(__('Can not complete a %status% order', [
+                'status' => $this->getStatus(),
+            ]), OrderException::ERROR_CODE_ORDER_COMPLETED);
         }
+        Events::fire('order:before_complete', $this);
         $status = $this->getFsm()->doAction('complete');
         $this->resetCallbackStatus()
             ->setData('completed_at', time())
@@ -73,6 +105,63 @@ trait OrderFsmTrait
             ->setData('cash_to_pay', 0)
             ->updateStatus($status, $comment ?: __('Order complete'))
             ->refreshFsmHistory();
+        Events::fire('order:after_complete', $this);
+    }
+
+    public function confirm($comment = null)
+    {
+        if (!$this->canConfirm()) {
+            throw new OrderException(__('Can not confirm a %status% order', [
+                'status' => $this->getStatus(),
+            ]), OrderException::ERROR_CODE_ORDER_PROCESSING);
+        }
+        Events::fire('order:before_processing', $this);
+        $status = $this->getFsm()->doAction('confirm');
+        $this->updateStatus($status, $comment ?: __('Order confirmed'))
+            ->refreshFsmHistory();
+        Events::fire('order:after_processing', $this);
+    }
+
+    public function confirmCancel($comment = null)
+    {
+        if (!$this->canConfirmCancel()) {
+            throw new OrderException(__('Can not cancel a %status% order', [
+                'status' => $this->getStatus(),
+            ]), OrderException::ERROR_CODE_ORDER_CANNOT_BE_CANCELED);
+        }
+        Events::fire('order:before_canceled', $this);
+        $status = $this->getFsm()->doAction('confirm_cancel');
+        $this->updateStatus($status, $comment ?: __('Order canceled'))
+            ->refreshFsmHistory();
+        Events::fire('order:after_canceled', $this);
+    }
+
+    public function confirmFail($comment = null)
+    {
+        if (!$this->canConfirmFail()) {
+            throw new OrderException(__('Can not fail a %status% order', [
+                'status' => $this->getStatus(),
+            ]), OrderException::ERROR_CODE_ORDER_CANNOT_BE_FAILED);
+        }
+        Events::fire('order:before_failed', $this);
+        $status = $this->getFsm()->doAction('confirm_fail');
+        $this->updateStatus($status, $comment ?: __('Order failed'))
+            ->refreshFsmHistory();
+        Events::fire('order:after_failed', $this);
+    }
+
+    public function fail($comment = null)
+    {
+        if (!$this->canFail()) {
+            throw new OrderException(__('Can not mark a %status% order as failing', [
+                'status' => $this->getStatus(),
+            ]), OrderException::ERROR_CODE_ORDER_CANNOT_BE_FAILED);
+        }
+        Events::fire('order:before_failing', $this);
+        $status = $this->getFsm()->doAction('fail');
+        $this->updateStatus($status, $comment ?: __('Order failing'))
+            ->refreshFsmHistory();
+        Events::fire('order:after_failing', $this);
     }
 
     /**
@@ -123,6 +212,7 @@ trait OrderFsmTrait
                 ]), OrderException::ERROR_CODE_ORDER_PROCESSING);
             }
         }
+        $order->setOrderData('request_data', $data);
 
         // Fire before_prepare_order_data event
         $data = Events::fire('order:before_prepare_order_data', $order, $data) ?: $data;

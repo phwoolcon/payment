@@ -24,6 +24,7 @@ class Order extends Model
     const STATUS_CANCELING = 'canceling';
     const STATUS_COMPLETE = 'complete';
     const STATUS_FAILED = 'failed';
+    const STATUS_FAILING = 'failing';
     const STATUS_PENDING = 'pending';
     const STATUS_PROCESSING = 'processing';
 

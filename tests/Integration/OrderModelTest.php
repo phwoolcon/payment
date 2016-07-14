@@ -121,7 +121,7 @@ class OrderModelTest extends TestCase
         try {
             Order::prepare([
                 'order_prefix' => 'TEST',
-                'amount' => '0',
+                'amount' => '0.0',
                 'trade_id' => $tradeId,
                 'product_name' => 'Test product',
                 'user_identifier' => 'Test User',
@@ -255,5 +255,145 @@ class OrderModelTest extends TestCase
         }
         $this->assertInstanceOf(OrderException::class, $e);
         $this->assertEquals($e::ERROR_CODE_ORDER_PROCESSING, $e->getCode());
+    }
+
+    public function testConfirmOrder()
+    {
+        $tradeId = md5(microtime());
+
+        $order = Order::prepare([
+            'order_prefix' => 'PROCESSING',
+            'amount' => '1',
+            'trade_id' => $tradeId,
+            'product_name' => 'Test product',
+            'user_identifier' => 'Test User',
+            'client_id' => 'test_client',
+            'payment_gateway' => 'alipay',
+            'payment_method' => 'mobile_web',
+            'currency' => 'CNY',
+            'amount_in_currency' => '1',
+        ]);
+        $this->assertTrue($order->save(), $order->getStringMessages());
+        $order->confirm();
+        $this->assertTrue($order->save(), $order->getStringMessages());
+        $this->assertEquals($order::STATUS_PROCESSING, $order->getStatus());
+        $e = null;
+        try {
+            $order->confirm();
+        } catch (OrderException $e) {
+        }
+        $this->assertInstanceOf(OrderException::class, $e);
+        $this->assertEquals($e::ERROR_CODE_ORDER_PROCESSING, $e->getCode());
+    }
+
+    public function testCompleteOrder()
+    {
+        $tradeId = md5(microtime());
+
+        $order = Order::prepare([
+            'order_prefix' => 'COMPLETE',
+            'amount' => '1',
+            'trade_id' => $tradeId,
+            'product_name' => 'Test product',
+            'user_identifier' => 'Test User',
+            'client_id' => 'test_client',
+            'payment_gateway' => 'alipay',
+            'payment_method' => 'mobile_web',
+            'currency' => 'CNY',
+            'amount_in_currency' => '1',
+        ]);
+        $this->assertTrue($order->save(), $order->getStringMessages());
+        $order->complete();
+        $this->assertTrue($order->save(), $order->getStringMessages());
+        $this->assertEquals($order::STATUS_COMPLETE, $order->getStatus());
+        $e = null;
+        try {
+            $order->complete();
+        } catch (OrderException $e) {
+        }
+        $this->assertInstanceOf(OrderException::class, $e);
+        $this->assertEquals($e::ERROR_CODE_ORDER_COMPLETED, $e->getCode());
+    }
+
+    public function testCancelOrder()
+    {
+        $tradeId = md5(microtime());
+
+        $order = Order::prepare([
+            'order_prefix' => 'CANCELED',
+            'amount' => '1',
+            'trade_id' => $tradeId,
+            'product_name' => 'Test product',
+            'user_identifier' => 'Test User',
+            'client_id' => 'test_client',
+            'payment_gateway' => 'alipay',
+            'payment_method' => 'mobile_web',
+            'currency' => 'CNY',
+            'amount_in_currency' => '1',
+        ]);
+        $this->assertTrue($order->save(), $order->getStringMessages());
+        $order->cancel();
+        $this->assertTrue($order->save(), $order->getStringMessages());
+        $this->assertEquals($order::STATUS_CANCELING, $order->getStatus());
+        $e = null;
+        try {
+            $order->cancel();
+        } catch (OrderException $e) {
+        }
+        $this->assertInstanceOf(OrderException::class, $e);
+        $this->assertEquals($e::ERROR_CODE_ORDER_CANNOT_BE_CANCELED, $e->getCode());
+
+        $order->confirmCancel();
+        $this->assertTrue($order->save(), $order->getStringMessages());
+        $this->assertEquals($order::STATUS_CANCELED, $order->getStatus());
+
+        $e = null;
+        try {
+            $order->confirmCancel();
+        } catch (OrderException $e) {
+        }
+        $this->assertInstanceOf(OrderException::class, $e);
+        $this->assertEquals($e::ERROR_CODE_ORDER_CANNOT_BE_CANCELED, $e->getCode());
+    }
+
+    public function testFailOrder()
+    {
+        $tradeId = md5(microtime());
+
+        $order = Order::prepare([
+            'order_prefix' => 'FAILED',
+            'amount' => '1',
+            'trade_id' => $tradeId,
+            'product_name' => 'Test product',
+            'user_identifier' => 'Test User',
+            'client_id' => 'test_client',
+            'payment_gateway' => 'alipay',
+            'payment_method' => 'mobile_web',
+            'currency' => 'CNY',
+            'amount_in_currency' => '1',
+        ]);
+        $this->assertTrue($order->save(), $order->getStringMessages());
+        $order->fail();
+        $this->assertTrue($order->save(), $order->getStringMessages());
+        $this->assertEquals($order::STATUS_FAILING, $order->getStatus());
+        $e = null;
+        try {
+            $order->fail();
+        } catch (OrderException $e) {
+        }
+        $this->assertInstanceOf(OrderException::class, $e);
+        $this->assertEquals($e::ERROR_CODE_ORDER_CANNOT_BE_FAILED, $e->getCode());
+
+        $order->confirmFail();
+        $this->assertTrue($order->save(), $order->getStringMessages());
+        $this->assertEquals($order::STATUS_FAILED, $order->getStatus());
+
+        $e = null;
+        try {
+            $order->confirmFail();
+        } catch (OrderException $e) {
+        }
+        $this->assertInstanceOf(OrderException::class, $e);
+        $this->assertEquals($e::ERROR_CODE_ORDER_CANNOT_BE_FAILED, $e->getCode());
     }
 }
