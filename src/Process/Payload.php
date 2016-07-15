@@ -10,8 +10,12 @@ use Phwoolcon\Payload as PhwoolconPayload;
  * @method string getGateway()
  * @method string getMethod()
  * @method Result getResult()
- * @method static setResult(Result $result)
  */
 class Payload extends PhwoolconPayload
 {
+
+    public function setResult(Result $result)
+    {
+        return $this->setData('result', $result);
+    }
 }

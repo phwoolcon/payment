@@ -9,6 +9,7 @@ use Phwoolcon\Payment\Exception\ResultException;
  * Class Result
  * @package Phwoolcon\Payment\Process
  *
+ * @method array getError()
  * @method Order getOrder()
  */
 class Result extends PhwoolconPayload

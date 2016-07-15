@@ -12,6 +12,10 @@ class MobileWebPay implements MethodInterface
     {
     }
 
+    public function createCallbackSign($order, $callbackData)
+    {
+    }
+
     public function payRequest($data)
     {
     }
