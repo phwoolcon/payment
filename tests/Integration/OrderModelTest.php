@@ -26,7 +26,7 @@ class OrderModelTest extends TestCase
     protected function getTestOrder()
     {
         $order = $this->getOrderModelInstance();
-        if ($tmp = $order->getByTradeId($tradeId = 'TEST-TRADE-ID', 'test_client')) {
+        if ($tmp = $order::getByTradeId($tradeId = 'TEST-TRADE-ID', 'test_client')) {
             $order = $tmp;
         } else {
             $order = Order::prepare([

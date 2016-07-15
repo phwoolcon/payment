@@ -205,7 +205,7 @@ trait OrderFsmTrait
             }
         }
         // Load existing order if any
-        if ($existingOrder = $order->getByTradeId($data['trade_id'], $data['client_id'])) {
+        if ($existingOrder = $order::getByTradeId($data['trade_id'], $data['client_id'])) {
             $order = $existingOrder;
             if (!$order->canPrepare()) {
                 throw new OrderException(__('Order "%trade_id%" is %status%, please do not submit repeatedly', [

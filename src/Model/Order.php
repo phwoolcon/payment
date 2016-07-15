@@ -10,8 +10,12 @@ use Phwoolcon\Model;
  *
  * @property Di     $_dependencyInjector
  * @property string $status
+ * @method float getAmount()
+ * @method float getCashPaid()
+ * @method float getCashToPay()
  * @method string getStatus()
  * @method string getTradeId()
+ * @method Order setAmount(float $amount)
  * @method Order setStatus(string $status)
  * @method Order setPrefixedOrderId(string $orderId)
  */
@@ -77,11 +81,18 @@ class Order extends Model
         return $this;
     }
 
-    public function getByTradeId($tradeId, $clientId)
+    public static function getByPrefixedOrderId($orderId)
     {
-        return static::findFirst([
-            'trade_id = :tradeId: AND client_id = :clientId:',
-            'bind' => compact('tradeId', 'clientId'),
+        return static::findFirstSimple([
+            static::PREFIXED_ORDER_ID_FIELD => $orderId,
+        ]);
+    }
+
+    public static function getByTradeId($tradeId, $clientId)
+    {
+        return static::findFirstSimple([
+            'trade_id' => $tradeId,
+            'client_id' => $clientId,
         ]);
     }
 
@@ -89,6 +100,11 @@ class Order extends Model
     {
         $fields = array_values($this->keyFields);
         return array_combine($fields, $fields);
+    }
+
+    public function getOrderId()
+    {
+        return $this->getData(static::PREFIXED_ORDER_ID_FIELD);
     }
 
     /**
