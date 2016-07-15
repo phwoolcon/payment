@@ -24,6 +24,12 @@ return [
                     'description' => 'Invalid Pay',
                 ],
             ],
+            'required_callback_parameters' => [
+                'order_id',
+                'amount',
+                'status',
+                'sign',
+            ],
         ],
     ],
 ];
