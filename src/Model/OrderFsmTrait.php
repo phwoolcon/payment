@@ -10,6 +10,25 @@ use Phwoolcon\Fsm\StateMachine;
  * Class OrderFsmTrait
  * @package Phwoolcon\Payment\Model
  *
+ * @method Order cancel(string $comment = null)
+ * @see OrderFsmTrait::takeAction()
+ * @method bool canCancel()
+ * @method bool canComplete()
+ * @method bool canConfirm()
+ * @method bool canConfirmCancel()
+ * @method bool canConfirmFail()
+ * @method bool canFail()
+ * @method bool canPrepare()
+ * @method Order complete(string $comment = null)
+ * @see OrderFsmTrait::takeAction()
+ * @method Order confirm(string $comment = null)
+ * @see OrderFsmTrait::takeAction()
+ * @method Order confirmCancel(string $comment = null)
+ * @see OrderFsmTrait::takeAction()
+ * @method Order confirmFail(string $comment = null)
+ * @see OrderFsmTrait::takeAction()
+ * @method Order fail(string $comment = null)
+ * @see OrderFsmTrait::takeAction()
  * @method Order updateStatus(string $status, string $comment)
  */
 trait OrderFsmTrait
@@ -18,6 +37,19 @@ trait OrderFsmTrait
      * @var StateMachine
      */
     protected $fsm;
+
+    /**
+     * Defines FSM transitions here
+     * Structure:
+     *  'current_status' => [
+     *      'actionName' => 'to_status'
+     *  ]
+     *
+     * NOTICE:
+     * actionName is in camelCase to maintain the consistency with method names used in static::__call()
+     *
+     * @var array
+     */
     protected $fsmTransitions = [
         Order::STATUS_PENDING => [
             'prepare' => Order::STATUS_PENDING,
@@ -33,137 +65,89 @@ trait OrderFsmTrait
         ],
         Order::STATUS_CANCELING => [
             'complete' => Order::STATUS_COMPLETE,
-            'confirm_cancel' => Order::STATUS_CANCELED,
+            'confirmCancel' => Order::STATUS_CANCELED,
         ],
         Order::STATUS_FAILING => [
             'complete' => Order::STATUS_COMPLETE,
-            'confirm_fail' => Order::STATUS_FAILED,
+            'confirmFail' => Order::STATUS_FAILED,
         ],
     ];
 
-    public function canCancel()
-    {
-        return $this->getFsm()->canDoAction('cancel');
-    }
+    /**
+     * Defines FSM actions here
+     * Structure:
+     *  'actionName' => [
+     *      'default_comment' => 'The comment will be saved in order history',
+     *      'error_code' => $number,        // An error will be thrown if action is not allowed
+     *      'error_message' => $message,    // Specify error code and message here
+     *  ]
+     *
+     * @var array
+     */
+    protected $fsmActions = [
+        'cancel' => [
+            'default_comment' => 'Order canceling',
+            'error_code' => OrderException::ERROR_CODE_ORDER_CANNOT_BE_CANCELED,
+            'error_message' => 'Can not mark a %status% order as canceling',
+        ],
+        'complete' => [
+            'default_comment' => 'Order complete',
+            'error_code' => OrderException::ERROR_CODE_ORDER_COMPLETED,
+            'error_message' => 'Can not complete a %status% order',
+        ],
+        'confirm' => [
+            'default_comment' => 'Order processing',
+            'error_code' => OrderException::ERROR_CODE_ORDER_PROCESSING,
+            'error_message' => 'Can not confirm a %status% order',
+        ],
+        'confirmCancel' => [
+            'default_comment' => 'Order canceled',
+            'error_code' => OrderException::ERROR_CODE_ORDER_CANNOT_BE_CANCELED,
+            'error_message' => 'Can not cancel a %status% order',
+        ],
+        'confirmFail' => [
+            'default_comment' => 'Order failed',
+            'error_code' => OrderException::ERROR_CODE_ORDER_CANNOT_BE_FAILED,
+            'error_message' => 'Can not fail a %status% order',
+        ],
+        'fail' => [
+            'default_comment' => 'Order failing',
+            'error_code' => OrderException::ERROR_CODE_ORDER_CANNOT_BE_FAILED,
+            'error_message' => 'Can not mark a %status% order as failing',
+        ],
+    ];
 
-    public function cancel($comment = null)
+    public function __call($method, $arguments)
     {
-        if (!$this->canCancel()) {
-            throw new OrderException(__('Can not mark a %status% order as canceling', [
-                'status' => $this->getStatus(),
-            ]), OrderException::ERROR_CODE_ORDER_CANNOT_BE_CANCELED);
+        if (isset($this->fsmActions[$method])) {
+            $this->takeAction($method, $arguments);
+            return $this;
         }
-        Events::fire('order:before_canceling', $this);
-        $status = $this->getFsm()->doAction('cancel');
-        $this->updateStatus($status, $comment ?: __('Order canceling'))
-            ->refreshFsmHistory();
-        Events::fire('order:after_canceling', $this);
-    }
-
-    public function canComplete()
-    {
-        return $this->getFsm()->canDoAction('complete');
-    }
-
-    public function canConfirm()
-    {
-        return $this->getFsm()->canDoAction('confirm');
-    }
-
-    public function canConfirmCancel()
-    {
-        return $this->getFsm()->canDoAction('confirm_cancel');
-    }
-
-    public function canConfirmFail()
-    {
-        return $this->getFsm()->canDoAction('confirm_fail');
-    }
-
-    public function canFail()
-    {
-        return $this->getFsm()->canDoAction('fail');
-    }
-
-    public function canPrepare()
-    {
-        return $this->getFsm()->canDoAction('prepare');
-    }
-
-    public function complete($comment = null)
-    {
-        if (!$this->canComplete()) {
-            throw new OrderException(__('Can not complete a %status% order', [
-                'status' => $this->getStatus(),
-            ]), OrderException::ERROR_CODE_ORDER_COMPLETED);
+        if (($prefix = substr($method, 0, 3)) == 'can') {
+            $action = lcfirst(substr($method, 3));
+            return $this->getFsm()->canDoAction($action);
         }
-        Events::fire('order:before_complete', $this);
-        $status = $this->getFsm()->doAction('complete');
+        return parent::__call($method, $arguments);
+    }
+
+    protected function afterComplete()
+    {
         $this->resetCallbackStatus()
             ->setData('completed_at', time())
             ->setData('cash_paid', $this->getData('cash_to_pay'))
-            ->setData('cash_to_pay', 0)
-            ->updateStatus($status, $comment ?: __('Order complete'))
-            ->refreshFsmHistory();
-        Events::fire('order:after_complete', $this);
+            ->setData('cash_to_pay', 0);
     }
 
-    public function confirm($comment = null)
+    protected function afterConfirmCancel()
     {
-        if (!$this->canConfirm()) {
-            throw new OrderException(__('Can not confirm a %status% order', [
-                'status' => $this->getStatus(),
-            ]), OrderException::ERROR_CODE_ORDER_PROCESSING);
-        }
-        Events::fire('order:before_processing', $this);
-        $status = $this->getFsm()->doAction('confirm');
-        $this->updateStatus($status, $comment ?: __('Order confirmed'))
-            ->refreshFsmHistory();
-        Events::fire('order:after_processing', $this);
+        $this->resetCallbackStatus()
+            ->setData('canceled_at', time());
     }
 
-    public function confirmCancel($comment = null)
+    protected function afterConfirmFail()
     {
-        if (!$this->canConfirmCancel()) {
-            throw new OrderException(__('Can not cancel a %status% order', [
-                'status' => $this->getStatus(),
-            ]), OrderException::ERROR_CODE_ORDER_CANNOT_BE_CANCELED);
-        }
-        Events::fire('order:before_canceled', $this);
-        $status = $this->getFsm()->doAction('confirm_cancel');
-        $this->updateStatus($status, $comment ?: __('Order canceled'))
-            ->setData('canceled_at', time())
-            ->refreshFsmHistory();
-        Events::fire('order:after_canceled', $this);
-    }
-
-    public function confirmFail($comment = null)
-    {
-        if (!$this->canConfirmFail()) {
-            throw new OrderException(__('Can not fail a %status% order', [
-                'status' => $this->getStatus(),
-            ]), OrderException::ERROR_CODE_ORDER_CANNOT_BE_FAILED);
-        }
-        Events::fire('order:before_failed', $this);
-        $status = $this->getFsm()->doAction('confirm_fail');
-        $this->updateStatus($status, $comment ?: __('Order failed'))
-            ->setData('failed_at', time())
-            ->refreshFsmHistory();
-        Events::fire('order:after_failed', $this);
-    }
-
-    public function fail($comment = null)
-    {
-        if (!$this->canFail()) {
-            throw new OrderException(__('Can not mark a %status% order as failing', [
-                'status' => $this->getStatus(),
-            ]), OrderException::ERROR_CODE_ORDER_CANNOT_BE_FAILED);
-        }
-        Events::fire('order:before_failing', $this);
-        $status = $this->getFsm()->doAction('fail');
-        $this->updateStatus($status, $comment ?: __('Order failing'))
-            ->refreshFsmHistory();
-        Events::fire('order:after_failing', $this);
+        $this->resetCallbackStatus()
+            ->setData('failed_at', time());
     }
 
     /**
@@ -175,6 +159,15 @@ trait OrderFsmTrait
             $this->fsm = StateMachine::create($this->fsmTransitions, $this->getFsmHistory());
         }
         return $this->fsm;
+    }
+
+    /**
+     * @return array
+     * @codeCoverageIgnore
+     */
+    public function getFsmActions()
+    {
+        return $this->fsmActions;
     }
 
     public function getFsmHistory()
@@ -285,6 +278,17 @@ trait OrderFsmTrait
     }
 
     /**
+     * @param array $actions
+     * @return $this
+     * @codeCoverageIgnore
+     */
+    public function setFsmActions(array $actions)
+    {
+        $this->fsmActions = $actions;
+        return $this;
+    }
+
+    /**
      * @param array $fsmTransitions
      * @return $this
      * @codeCoverageIgnore
@@ -293,5 +297,53 @@ trait OrderFsmTrait
     {
         $this->fsmTransitions = $fsmTransitions;
         return $this;
+    }
+
+    /**
+     * Take order actions such as cancel, confirm, complete, fail, and so on
+     * You can extend your custom action by modifying property $this->fsmActions and $this->fsmTransitions
+     *
+     * @param string $method
+     * @param array  $arguments
+     */
+    protected function takeAction($method, $arguments)
+    {
+        $action = lcfirst($method);
+        $options = $this->fsmActions[$method];
+        $comment = empty($arguments[0]) ? __($options['default_comment']) : $arguments[0];
+        if (!$this->getFsm()->canDoAction($action)) {
+            throw new OrderException(__($options['error_message'], [
+                'status' => $this->getStatus(),
+            ]), $options['error_code']);
+        }
+        /**
+         * Fire before action events
+         *
+         * @see OrderFsmTrait::beforeCancel();          Event type: "order:before_cancel"
+         * @see OrderFsmTrait::beforeComplete();        Event type: "order:before_complete"
+         * @see OrderFsmTrait::beforeConfirm();         Event type: "order:before_confirm"
+         * @see OrderFsmTrait::beforeConfirmCancel();   Event type: "order:before_confirm_cancel"
+         * @see OrderFsmTrait::beforeConfirmFail();     Event type: "order:before_confirm_fail"
+         * @see OrderFsmTrait::beforeFail();            Event type: "order:before_fail"
+         */
+        Events::fire('order:before_' . $action, $this);
+        method_exists($this, $beforeMethod = 'before' . $method) and $this->{$beforeMethod}();
+
+        $status = $this->getFsm()->doAction($action);
+        $this->updateStatus($status, $comment)
+            ->refreshFsmHistory();
+
+        /**
+         * Fire after action events
+         *
+         * @see OrderFsmTrait::afterCancel();           Event type: "order:after_cancel"
+         * @see OrderFsmTrait::afterComplete();         Event type: "order:after_complete"
+         * @see OrderFsmTrait::afterConfirm();          Event type: "order:after_confirm"
+         * @see OrderFsmTrait::afterConfirmCancel();    Event type: "order:after_confirm_cancel"
+         * @see OrderFsmTrait::afterConfirmFail();      Event type: "order:after_confirm_fail"
+         * @see OrderFsmTrait::afterFail();             Event type: "order:after_fail"
+         */
+        method_exists($this, $afterMethod = 'after' . $method) and $this->{$afterMethod}();
+        Events::fire('order:after_' . $action, $this);
     }
 }
