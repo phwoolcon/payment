@@ -4,15 +4,10 @@ namespace Phwoolcon\Payment\Tests\Unit\Process;
 use Phwoolcon\Payment\Exception\ResultException;
 use Phwoolcon\Payment\Model\Order;
 use Phwoolcon\Payment\Process\Result;
-use Phwoolcon\Tests\Helper\TestCase;
+use Phwoolcon\Payment\Tests\Helper\TestCase;
 
 class ResultTest extends TestCase
 {
-
-    public function setUp()
-    {
-        parent::setUp();
-    }
 
     public function testNormalResult()
     {

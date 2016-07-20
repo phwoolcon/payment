@@ -5,8 +5,8 @@ use Exception;
 use Phwoolcon\Config;
 use Phwoolcon\Payment\Exception\CallbackException;
 use Phwoolcon\Payment\Model\Order;
+use Phwoolcon\Payment\Tests\Helper\TestCase;
 use Phwoolcon\Payment\Tests\Helper\TestPaymentMethod;
-use Phwoolcon\Tests\Helper\TestCase;
 
 class MethodTest extends TestCase
 {

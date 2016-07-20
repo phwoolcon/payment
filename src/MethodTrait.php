@@ -31,7 +31,7 @@ trait MethodTrait
     }
 
     /**
-     * @param $orderId
+     * @param string $orderId
      * @return Order
      */
     public function getCallbackOrder($orderId)

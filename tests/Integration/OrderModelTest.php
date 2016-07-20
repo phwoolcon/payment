@@ -5,7 +5,7 @@ use Phwoolcon\Db;
 use Phwoolcon\Payment\Exception\OrderException;
 use Phwoolcon\Payment\Model\Order;
 use Phwoolcon\Payment\Model\OrderData;
-use Phwoolcon\Tests\Helper\TestCase;
+use Phwoolcon\Payment\Tests\Helper\TestCase;
 use Phwoolcon\Payment\Tests\Helper\TestOrderModel;
 use Phwoolcon\Payment\Tests\Helper\TestOrderDataModel;
 

@@ -5,7 +5,7 @@ return [
         'alipay' => [
             'description' => 'Alipay',
             'methods' => [
-                'mobile_web_pay' => [
+                'mobile_web' => [
                     'class' => 'Phwoolcon\Payment\Alipay\MobileWebPay',
                     'description' => 'Alipay Mobile Web Pay',
                 ],

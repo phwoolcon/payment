@@ -13,6 +13,8 @@ use Phwoolcon\Model;
  * @method float getAmount()
  * @method float getCashPaid()
  * @method float getCashToPay()
+ * @method int getCreatedAt()
+ * @method string getProductName()
  * @method string getStatus()
  * @method string getTradeId()
  * @method Order setAmount(float $amount)
@@ -102,11 +104,6 @@ class Order extends Model
         return array_combine($fields, $fields);
     }
 
-    public function getOrderId()
-    {
-        return $this->getData(static::PREFIXED_ORDER_ID_FIELD);
-    }
-
     /**
      * @param string $key
      * @return mixed|OrderData
@@ -123,6 +120,16 @@ class Order extends Model
         }
         $data = $this->orderData->getData('data');
         return $key ? fnGet($data, $key) : $this->orderData;
+    }
+
+    public function getOrderId()
+    {
+        return $this->getData(static::PREFIXED_ORDER_ID_FIELD);
+    }
+
+    public function getPrefixedOrderId()
+    {
+        return $this->getData(static::PREFIXED_ORDER_ID_FIELD);
     }
 
     /**

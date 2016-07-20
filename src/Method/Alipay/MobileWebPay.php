@@ -1,22 +1,29 @@
 <?php
-namespace Phwoolcon\Payment\Alipay;
+namespace Phwoolcon\Payment\Method\Alipay;
 
 use Phwoolcon\Payment\MethodInterface;
 use Phwoolcon\Payment\MethodTrait;
+use Phwoolcon\Payment\Process\Result;
 
 class MobileWebPay implements MethodInterface
 {
-    use MethodTrait;
-
-    public function callback($data)
-    {
+    use MethodTrait, AbstractTrait {
+        AbstractTrait::verifyCallbackSign insteadof MethodTrait;
     }
 
-    public function createCallbackSign($order, $callbackData)
-    {
-    }
+    protected $service = 'alipay.wap.create.direct.pay.by.user';
+    protected $gatewayUrl = 'https://mapi.alipay.com/gateway.do';
 
     public function payRequest($data)
     {
+        $order = $this->prepareOrder($data);
+        $alipayRequest = $this->getRequestData($order);
+        $alipayRequest['sign'] = $this->rsaSign($alipayRequest);
+        $order->setOrderData('alipay_request', $alipayRequest)
+            ->setOrderData('alipay_request_url', $this->createGatewayUrl($alipayRequest));
+        $order->save();
+        return Result::create([
+            'order' => $order,
+        ]);
     }
 }

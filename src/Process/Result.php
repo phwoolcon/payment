@@ -1,6 +1,7 @@
 <?php
 namespace Phwoolcon\Payment\Process;
 
+use Exception;
 use Phwoolcon\Payment\Model\Order;
 use Phwoolcon\Payload as PhwoolconPayload;
 use Phwoolcon\Payment\Exception\ResultException;
@@ -9,8 +10,9 @@ use Phwoolcon\Payment\Exception\ResultException;
  * Class Result
  * @package Phwoolcon\Payment\Process
  *
- * @method array getError()
+ * @method array|Exception getError()
  * @method Order getOrder()
+ * @method string|array getResponse()
  */
 class Result extends PhwoolconPayload
 {

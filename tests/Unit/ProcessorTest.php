@@ -6,20 +6,10 @@ use Phwoolcon\Payment\Exception\GeneralException;
 use Phwoolcon\Payment\Process\Payload;
 use Phwoolcon\Payment\Process\Result;
 use Phwoolcon\Payment\Processor;
-use Phwoolcon\Tests\Helper\TestCase;
-use Phwoolcon\Payment\Tests\Helper\TestOrderDataModel;
-use Phwoolcon\Payment\Tests\Helper\TestOrderModel;
+use Phwoolcon\Payment\Tests\Helper\TestCase;
 
 class ProcessorTest extends TestCase
 {
-
-    public function setUp()
-    {
-        parent::setUp();
-        Processor::register($this->di);
-        new TestOrderModel;
-        new TestOrderDataModel;
-    }
 
     public function testRunPayRequest()
     {
