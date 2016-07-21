@@ -1,16 +1,16 @@
-# payment
+# Phwoolcon Payment
 Payment module for Phwoolcon
 
-## Installation
+Alipay is delivered by default with this module.
+
+## 1. Installation
 Add this library to your project by composer:
 
 ```
 composer require "phwoolcon/payment":"dev-master"
 ```
 
-## Usage
-
-### Configuration
+## 2. Configuration
 Please create a new config file `app/config/production/payment.php` to  
 override the default settings with real Alipay profile:
 ```php
@@ -32,7 +32,12 @@ THE_PUBLIC_KEY_APPLIED_FROM_ALIPAY
 
 ```
 
-### Start Alipay Pay Request
+## 3. Usage
+
+Phwoolcon Payment implements a abstracted payment processor, all  
+payment procedures are invoked by `Processor::run()`
+
+### 3.1. Start Alipay Pay Request
 ```php
 <?php
 use Phalcon\Di;
@@ -81,7 +86,7 @@ echo $notifyUrl;                // prints url like this:
                                 // once the payment is complete or closed
 ```
 
-### Process Alipay Callback
+### 3.2. Process Alipay Callback
 ```php
 <?php
 use Phalcon\Di;
@@ -98,3 +103,69 @@ $payload = Processor::run(Payload::create([
 $result = $payload->getResult();
 echo $result->getResponse();    // prints success
 ```
+
+## 4. How to Create Custom Payment Methods
+Payment methods are defined in config file `payment.php`, you can add  
+any payment gateways/methods if necessary.
+
+### 4.1. Create Payment Gateway/Method Config Structure
+Edit `app/config/payment.php`:
+```php
+<?php
+return [
+    'gateways' => [
+
+        .
+        .
+        .
+
+        'your_gateway' => [
+            'description' => 'Describe your payment gateway',
+            'order_prefix' => 'SOME_PREFIX',
+            'methods' => [
+                'payment_method_1' => [
+                    'class' => 'Fully\Qualified\Class\Name',
+                    'description' => 'Describe your payment method',
+                ],
+                'payment_method_2' => [
+                    'class' => 'Fully\Qualified\Class\Name',
+                    'description' => 'Describe your payment method',
+                ],
+            ],
+            'required_callback_parameters' => [
+                'order_id',
+                'amount',
+                'status',
+                'sign',
+            ],
+            'any_options' => 'value',
+            'another_option' => 'value',
+        ],
+    ],
+];
+```
+
+### 4.2. Fill Real World Profile
+Please DO NOT fill real world profile in previous file, if you add it  
+to a version control software (such as git, svn), it may leak your  
+payment gateway account to public.
+
+Instead, please fill them in a file in `app/config/production/payment.php`  
+and then add it to your VCS ignore list.
+
+### 4.3. Create Payment Method Class
+A payment method class should implement `Phwoolcon\Payment\MethodInterface`
+
+Some common features are abstracted in `Phwoolcon\Payment\MethodTrait`,  
+you can use it in your class.
+
+Take a quick glance at `Phwoolcon\Payment\Tests\Helper\TestPaymentMethod`
+
+A payment method should implements at last two actions:  
+`payRequest` and `callback`
+
+You can add any actions to your payment method, invoke them by pass  
+the action name to the payload of `Processor::run()`
+
+Any actions should return a `Phwoolcon\Payment\Process\Result`, which  
+should contain either an `Order` or an error.
