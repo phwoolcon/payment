@@ -1,4 +1,8 @@
 # Phwoolcon Payment
+[![Build Status](https://travis-ci.org/phwoolcon/payment.svg?branch=master)](https://travis-ci.org/phwoolcon/payment)
+[![Code Coverage](https://codecov.io/gh/phwoolcon/payment/branch/master/graph/badge.svg)](https://codecov.io/gh/phwoolcon/payment)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+
 Payment module for Phwoolcon
 
 Alipay is delivered by default with this module.
