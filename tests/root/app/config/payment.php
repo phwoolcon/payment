@@ -36,7 +36,7 @@ mfD6FVMe04e5KOAvMgfcduinuTm6j8TzZR6MZSRVUejsiUn4jFp46+qXmEdJEIc1
 i7C7RsK8pjt+uloCUE/OJmEwkXdI0FbWgWPpnEqRpZneqhXTV89JYyZ6+pYwT1Sk
 ML9Kzkd3GMAcagVEGQIDAQAB
 -----END PUBLIC KEY-----',
-            'return_url' => 'alipay/success',
+            'return_url' => 'api/alipay/return',
             'notify_url' => 'api/alipay/callback',
             'required_callback_parameters' => [
                 'trade_no',

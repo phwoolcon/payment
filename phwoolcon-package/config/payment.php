@@ -21,7 +21,7 @@ YOUR_PRIVATE_KEY_HERE
             'ali_public_key' => '-----BEGIN PUBLIC KEY-----
 ALI_PUBLIC_KEY_HERE
 -----END PUBLIC KEY-----',
-            'return_url' => 'alipay/success',
+            'return_url' => 'api/alipay/return',
             'notify_url' => 'api/alipay/callback',
             'required_callback_parameters' => [
                 'trade_no',
