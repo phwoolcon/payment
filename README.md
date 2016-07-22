@@ -49,6 +49,8 @@ use Phwoolcon\Payment\Processor;
 
 $di = Di::getDefault();
 Processor::register($di);
+
+$tradeId = md5(microtime());
 $payload = Processor::run(Payload::create([
     'gateway' => 'alipay',
     'method' => 'mobile_web',
