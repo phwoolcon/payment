@@ -15,7 +15,7 @@ matrix:
     - php: '7.0'
 
 mysql:
-  database: phwoolcon_test
+  database: phwoolcon_payment_test
   username: travis
   encoding: utf8mb4
 
@@ -33,7 +33,7 @@ before_install:
 before_script:
   - composer self-update
   - composer update --no-interaction --prefer-source
-  - mysql -uroot -e 'CREATE DATABASE `phwoolcon_test` /*!40100 DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci */;'
+  - mysql -uroot -e 'CREATE DATABASE `phwoolcon_payment_test` /*!40100 DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci */;'
   - pear install PHP_CodeSniffer
   - phpenv rehash
 

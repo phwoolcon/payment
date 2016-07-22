@@ -6,7 +6,7 @@ return [
         'mysql' => [
             'adapter'    => 'Phwoolcon\Db\Adapter\Pdo\Mysql',
             'host'       => '127.0.0.1',
-            'dbname'     => 'phwoolcon_test',
+            'dbname'     => 'phwoolcon_payment_test',
             'username'   => 'travis',
             'password'   => '',
             'charset'    => 'utf8mb4',
