@@ -165,7 +165,7 @@ you can use it in your class.
 
 Take a quick glance at `Phwoolcon\Payment\Tests\Helper\TestPaymentMethod`
 
-A payment method SHOULD implements at last two actions:  
+A payment method SHOULD implements at least two actions:  
 `payRequest` and `callback`
 
 You can add any actions to your payment method, invoke them by pass  
