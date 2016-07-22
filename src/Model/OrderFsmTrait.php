@@ -207,7 +207,7 @@ trait OrderFsmTrait
                 ]), OrderException::ERROR_CODE_ORDER_PROCESSING);
             }
         }
-        $order->setOrderData('request_data', $data);
+        $order->getOrderData()->setData('request_data', $data);
 
         // Fire before_prepare_order_data event
         $data = Events::fire('order:before_prepare_order_data', $order, $data) ?: $data;
