@@ -127,6 +127,11 @@ class Order extends Model
         return $this->getData(static::PREFIXED_ORDER_ID_FIELD);
     }
 
+    /**
+     * Alias of $this->getOrderId()
+     * @codeCoverageIgnore
+     * @return string
+     */
     public function getPrefixedOrderId()
     {
         return $this->getData(static::PREFIXED_ORDER_ID_FIELD);
