@@ -72,7 +72,7 @@ echo get_class($order);         // 输出 Phwoolcon\Payment\Model\Order
 
 echo $order->getStatus();       // 输出 pending
 
-$redirectUrl = $order->getOrderData('alipay_request_url');
+$redirectUrl = $order->getPaymentGatewayUrl();
 echo $redirectUrl;              // 输出类似这样的 url：
                                 // https://mapi.alipay.com/gateway.do?service=alipay.wap.create.direct.pay.by.user&partner=...
                                 // 你可以一个用 302 响应把用户浏览器重定向

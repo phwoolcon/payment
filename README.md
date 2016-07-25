@@ -73,7 +73,7 @@ echo get_class($order);         // prints Phwoolcon\Payment\Model\Order
 
 echo $order->getStatus();       // prints pending
 
-$redirectUrl = $order->getOrderData('alipay_request_url');
+$redirectUrl = $order->getPaymentGatewayUrl();
 echo $redirectUrl;              // prints url like this:
                                 // https://mapi.alipay.com/gateway.do?service=alipay.wap.create.direct.pay.by.user&partner=...
                                 // You can send 302 response to make browser
