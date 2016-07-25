@@ -3,12 +3,12 @@
 return [
     'gateways' => [
         'alipay' => [
-            'description' => 'Alipay',
+            'label' => 'Alipay',
             'order_prefix' => 'ALIPAY',
             'methods' => [
                 'mobile_web' => [
                     'class' => 'Phwoolcon\Payment\Method\Alipay\MobileWebPay',
-                    'description' => 'Alipay Mobile Web Pay',
+                    'label' => 'Alipay Mobile Web Pay',
                 ],
             ],
             'partner' => 'PARTNER_ID',

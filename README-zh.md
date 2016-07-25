@@ -125,16 +125,16 @@ return [
         .
 
         'your_gateway' => [
-            'description' => '支付网关名称',
+            'label' => '支付网关名称',
             'order_prefix' => 'SOME_PREFIX',
             'methods' => [
                 'payment_method_1' => [
                     'class' => 'Fully\Qualified\Class\Name',
-                    'description' => '支付方式名称',
+                    'label' => '支付方式名称',
                 ],
                 'payment_method_2' => [
                     'class' => 'Fully\Qualified\Class\Name',
-                    'description' => '支付方式名称',
+                    'label' => '支付方式名称',
                 ],
             ],
             'required_callback_parameters' => [

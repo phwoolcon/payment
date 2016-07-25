@@ -3,12 +3,12 @@
 return [
     'gateways' => [
         'alipay' => [
-            'description' => 'Alipay',
+            'label' => 'Alipay',
             'order_prefix' => 'ALIPAY',
             'methods' => [
                 'mobile_web' => [
                     'class' => 'Phwoolcon\Payment\Method\Alipay\MobileWebPay',
-                    'description' => 'Alipay Mobile Web Pay',
+                    'label' => 'Alipay Mobile Web Pay',
                 ],
             ],
             'partner' => 'PARTNER_ID',
@@ -49,16 +49,16 @@ ML9Kzkd3GMAcagVEGQIDAQAB
             ],
         ],
         'test_gateway' => [
-            'description' => 'Test',
+            'label' => 'Test',
             'order_prefix' => 'TEST',
             'methods' => [
                 'test_pay' => [
                     'class' => 'Phwoolcon\Payment\Tests\Helper\TestPaymentMethod',
-                    'description' => 'Test Pay',
+                    'label' => 'Test Pay',
                 ],
                 'invalid_method' => [
                     'class' => 'Phwoolcon\Payment\Tests\Helper\InvalidPaymentMethod',
-                    'description' => 'Invalid Pay',
+                    'label' => 'Invalid Pay',
                 ],
             ],
             'required_callback_parameters' => [

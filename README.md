@@ -126,16 +126,16 @@ return [
         .
 
         'your_gateway' => [
-            'description' => 'Describe your payment gateway',
+            'label' => 'Payment Gateway Name',
             'order_prefix' => 'SOME_PREFIX',
             'methods' => [
                 'payment_method_1' => [
                     'class' => 'Fully\Qualified\Class\Name',
-                    'description' => 'Describe your payment method',
+                    'label' => 'Payment Method Name',
                 ],
                 'payment_method_2' => [
                     'class' => 'Fully\Qualified\Class\Name',
-                    'description' => 'Describe your payment method',
+                    'label' => 'Payment Method Name',
                 ],
             ],
             'required_callback_parameters' => [
