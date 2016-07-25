@@ -37,7 +37,7 @@ class MobileWebPayTest extends TestCase
         $this->assertEquals($order->getOrderId(), $order->getOrderData('alipay_request.out_trade_no'));
         $this->assertEquals($order->getProductName(), $order->getOrderData('alipay_request.subject'));
         $this->assertEquals($order->getAmount(), $order->getOrderData('alipay_request.total_fee'));
-        $this->assertNotEmpty($order->getOrderData('alipay_request_url'));
+        $this->assertNotEmpty($order->getPaymentGatewayUrl());
         $this->assertNotEmpty($order->getOrderData('alipay_request.notify_url'));
         $this->assertNotEmpty($order->getOrderData('alipay_request.return_url'));
     }

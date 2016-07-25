@@ -20,7 +20,7 @@ class MobileWebPay implements MethodInterface
         $alipayRequest = $this->getRequestData($order);
         $alipayRequest['sign'] = $this->rsaSign($alipayRequest);
         $order->setOrderData('alipay_request', $alipayRequest)
-            ->setOrderData('alipay_request_url', $this->createGatewayUrl($alipayRequest));
+            ->setPaymentGatewayUrl($this->createGatewayUrl($alipayRequest));
         $order->save();
         return Result::create([
             'order' => $order,

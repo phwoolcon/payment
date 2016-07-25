@@ -127,6 +127,11 @@ class Order extends Model
         return $this->getData(static::PREFIXED_ORDER_ID_FIELD);
     }
 
+    public function getPaymentGatewayUrl()
+    {
+        return $this->getOrderData('payment_gateway_url');
+    }
+
     /**
      * Alias of $this->getOrderId()
      * @codeCoverageIgnore
@@ -183,6 +188,11 @@ class Order extends Model
     {
         $this->keyFields = $keyFields;
         return $this;
+    }
+
+    public function setPaymentGatewayUrl($url)
+    {
+        return $this->setOrderData('payment_gateway_url', $url);
     }
 
     /**
