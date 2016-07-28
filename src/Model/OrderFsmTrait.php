@@ -228,7 +228,11 @@ trait OrderFsmTrait
         }
 
         // Verify order data
-        $amount = $data['amount'] = fnGet($data, 'amount') * 1;
+        $amount = $data['amount_in_currency'] = fnGet($data, 'amount') * 1;
+        // TODO process currency exchange rate
+        $data['currency'] = fnGet($data, 'currency', 'CNY');
+        $data['amount'] = $amount;
+
         if ($amount <= 0) {
             throw new OrderException(__('Invalid order amount'), OrderException::ERROR_CODE_BAD_PARAMETERS);
         }
