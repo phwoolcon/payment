@@ -1,14 +1,12 @@
 <?php
 namespace Phwoolcon\Payment\Model;
 
-use Phalcon\Di;
 use Phwoolcon\Model;
 
 /**
  * Class Order
  * @package Phwoolcon\Payment\Model
  *
- * @property Di     $_dependencyInjector
  * @property string $status
  * @method float getAmount()
  * @method float getCashPaid()
