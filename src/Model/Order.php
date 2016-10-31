@@ -152,7 +152,6 @@ class Order extends Model
     public function initialize()
     {
         $class = OrderData::class;
-        $this->_dependencyInjector->has($class) and $class = $this->_dependencyInjector->getRaw($class);
         $this->hasOne('id', $class, 'order_id', ['alias' => 'order_data']);
         parent::initialize();
     }
