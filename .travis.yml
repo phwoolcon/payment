@@ -7,7 +7,7 @@ services:
 php:
   - '5.5'
   - '5.6'
-#  - '7.0'
+  - '7.0'
 
 matrix:
   fast_finish: true
@@ -27,8 +27,8 @@ cache:
 
 before_install:
   - sudo apt-get update -qq
+  - bin/ci-install-phalcon
   - composer install --prefer-source --no-interaction
-  - vendor/bin/install-phalcon.sh
 
 before_script:
   - composer self-update
