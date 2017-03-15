@@ -105,8 +105,8 @@ trait AbstractTrait
             'partner' => $this->config['partner'],
             '_input_charset' => $this->config['charset'],
             'sign_type' => $this->config['sign_type'],
-            'notify_url' => url($this->config['notify_url'], null, true),
-            'return_url' => url($this->config['return_url'], null, true),
+            'notify_url' => secureUrl($this->config['notify_url']),
+            'return_url' => secureUrl($this->config['return_url']),
 
             'out_trade_no' => $order->getOrderId(),
             'subject' => $order->getProductName(),
